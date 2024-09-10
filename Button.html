@@ -1,0 +1,60 @@
+<div class="flex items-center justify-end gap-5">
+<ys-button variant="ghost">Giriş Yap</ys-button>
+<ys-button>Kayıt Ol</ys-button>
+</div>
+
+<script>
+  
+class Button extends HTMLElement {
+  constructor() {
+    super();
+    const shadow = this.attachShadow({ mode: "open" });
+
+    const container = document.createElement("div");
+    container.classList.add("flex", "items-center", "justify-center", "gap-2");
+
+    this.button = document.createElement("div");
+    this.button.classList.add("cursor-pointer", "p-2", "transition-all");
+
+    this.button.textContent = this.textContent.trim(); 
+
+    container.appendChild(this.button);
+    shadow.appendChild(container);
+
+    const style = document.createElement("style");
+    style.textContent = `
+      @import url('styles.css'); 
+    `;
+    
+    shadow.appendChild(style);
+
+    this.updateVariant();
+  }
+
+  updateVariant() {
+    const variant = this.getAttribute('variant') || 'solid'; 
+    
+    this.button.classList.remove('bg-primary-main', 'bg-transparent', 'border', 'border-primary-main', 'text-primary-main', 'text-white');
+
+    if (variant === 'ghost') {
+       this.button.classList.add('after:bg-transparent', 'after:text-white',"after:border","after:absolute", "after:top-0","after:transition-all","hover:after:scale-110","after:left-0", "after:z-[-1]","text-primary-main", "z-[1]","after:border-primary-main","after:rounded-lg","relative","after:w-full","after:h-full");
+    } else if (variant === 'solid') {
+      this.button.classList.add('after:bg-primary-main', 'after:text-white',"after:border","after:absolute", "after:top-0","after:left-0","after:transition-all","hover:after:scale-110", "after:z-[-1]","text-white", "z-[1]","after:border-primary-main","after:rounded-lg","relative","after:w-full","after:h-full");
+    }
+  }
+
+  static get observedAttributes() {
+    return ['variant'];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === 'variant') {
+      this.updateVariant();
+    }
+  }
+}
+
+
+
+customElements.define("ys-button", Button);
+</script>
