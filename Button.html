@@ -5,56 +5,75 @@
 
 <script>
   
-class Button extends HTMLElement {
-  constructor() {
-    super();
-    const shadow = this.attachShadow({ mode: "open" });
 
-    const container = document.createElement("div");
-    container.classList.add("flex", "items-center", "justify-center", "gap-2");
+    class Button extends HTMLElement {
+      constructor() {
+        super();
+        const shadow = this.attachShadow({ mode: "open" });
 
-    this.button = document.createElement("div");
-    this.button.classList.add("cursor-pointer", "p-2", "transition-all");
+        const container = document.createElement("div");
+        container.classList.add("flex", "items-center", "justify-center", "gap-2");
 
-    this.button.textContent = this.textContent.trim(); 
+        this.button = document.createElement("div");
+        this.button.classList.add("cursor-pointer", "p-2", "transition-all");
 
-    container.appendChild(this.button);
-    shadow.appendChild(container);
+        this.button.textContent = this.textContent.trim();
 
-    const style = document.createElement("style");
-    style.textContent = `
-      @import url('styles.css'); 
+        container.appendChild(this.button);
+        shadow.appendChild(container);
+
+        const style = document.createElement("style");
+        style.textContent = `
+      @import url('styles.css');
     `;
-    
-    shadow.appendChild(style);
 
-    this.updateVariant();
-  }
+        shadow.appendChild(style);
 
-  updateVariant() {
-    const variant = this.getAttribute('variant') || 'solid'; 
-    
-    this.button.classList.remove('bg-primary-main', 'bg-transparent', 'border', 'border-primary-main', 'text-primary-main', 'text-white');
+        this.updateVariant();
+      }
 
-    if (variant === 'ghost') {
-       this.button.classList.add('after:bg-transparent', 'after:text-white',"after:border","after:absolute", "after:top-0","after:transition-all","hover:after:scale-110","after:left-0", "after:z-[-1]","text-primary-main", "z-[1]","after:border-primary-main","after:rounded-lg","relative","after:w-full","after:h-full");
-    } else if (variant === 'solid') {
-      this.button.classList.add('after:bg-primary-main', 'after:text-white',"after:border","after:absolute", "after:top-0","after:left-0","after:transition-all","hover:after:scale-110", "after:z-[-1]","text-white", "z-[1]","after:border-primary-main","after:rounded-lg","relative","after:w-full","after:h-full");
+      updateVariant() {
+        const variant = this.getAttribute('variant') || 'solid';
+        const fullWidthVariant = this.hasAttribute('fullWidth');
+        const customClass = this.getAttribute('customClass') || ''; // `customClass` özelliğini al
+
+        this.button.classList.add("px-5", "flex", "items-center", "justify-center");
+
+        if (fullWidthVariant) {
+          this.button.classList.add("w-full");
+        } else {
+          this.button.classList.remove("w-full");
+        }
+
+
+        if (variant === 'ghost') {
+          this.button.classList.add('after:bg-transparent', 'hover:after:border-primary-hover','after:text-white', 'after:border', 'after:absolute',
+            'after:top-0', 'after:transition-all', 'hover:after:scale-110', 'after:left-0',
+            'after:z-[-1]', 'text-primary-main', 'z-[1]', 'after:border-primary-main',
+            'after:rounded-lg', 'relative', 'after:w-full', 'after:h-full');
+        } else if (variant === 'solid') {
+          this.button.classList.add('after:bg-primary-main','hover:after:bg-primary-hover', 'after:text-white', 'after:border', 'after:absolute',
+            'after:top-0', 'after:left-0', 'after:transition-all', 'hover:after:scale-110',
+            'after:z-[-1]', 'text-white', 'z-[1]', 'after:border-primary-main',
+            'after:rounded-lg', 'relative', 'after:w-full', 'after:h-full');
+        }
+
+        // `customClass` özelliğini uygula
+        if (customClass) {
+          this.button.classList.add(...customClass.split(' '));
+        }
+      }
+
+      static get observedAttributes() {
+        return ['variant', 'fullWidth', 'customClass'];
+      }
+
+      attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'variant' || name === 'fullWidth' || name === 'customClass') {
+          this.updateVariant();
+        }
+      }
     }
-  }
+    customElements.define("ys-button", Button);
 
-  static get observedAttributes() {
-    return ['variant'];
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (name === 'variant') {
-      this.updateVariant();
-    }
-  }
-}
-
-
-
-customElements.define("ys-button", Button);
 </script>
